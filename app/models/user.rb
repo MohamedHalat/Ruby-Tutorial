@@ -7,7 +7,7 @@ class User < ApplicationRecord
   validates :email, presence: true, length: { minimum: 0, maximum: 255 }, format: { with: VALID_EMAIL_REGEX }, uniqueness: true
 
   has_secure_password
-  validates :password, length: { minimum: 6, maximum: 128 }
+  validates :password, length: { minimum: 6, maximum: 128 }, allow_nil: true
 
   def User.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
@@ -30,5 +30,15 @@ class User < ApplicationRecord
 
   def forget 
     update_attribute(:remember_digest, nil)
+  end
+
+  def update(params)
+    name ||= params[:name]
+    email ||= params[:email]
+    password ||= params[:password]
+
+    update_attribute(:name, name)
+    update_attribute(:email, email)
+    update_attribute(:password, password)
   end
 end
