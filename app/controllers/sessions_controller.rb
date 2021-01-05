@@ -13,6 +13,7 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:session][:password])
       flash[:success] = "Welcome to the Sample App!"
       log_in user
+      remember user
       redirect_to user
     else
       flash[:danger] = "Failed Log in"
