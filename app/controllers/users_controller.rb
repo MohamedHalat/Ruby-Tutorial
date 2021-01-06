@@ -5,6 +5,7 @@ class UsersController < ApplicationController
 
   def index
     @users = User.paginate(page: params[:page])
+    @microposts = current_user.microposts.paginate(page: params[:page])
   end
 
   def new
@@ -13,6 +14,8 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    @microposts = current_user.microposts.paginate(page: params[:page])
+    redirect_to :home if current_user == @user
   end
 
   def create
@@ -40,10 +43,6 @@ class UsersController < ApplicationController
     end
   end
 
-  def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation)
-  end
-
   def logged_in_user
     unless logged_in?
       store_location
@@ -65,5 +64,11 @@ class UsersController < ApplicationController
 
   def admin_user
     redirect_to(root_url) unless current_user.admin?
+  end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:name, :email, :password, :password_confirmation)
   end
 end
